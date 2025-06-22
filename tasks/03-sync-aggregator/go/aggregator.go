@@ -92,12 +92,7 @@ func processFileWithTimeout(relPath, fullPath string, inputTimeout int) Result {
 	}
 	defer f.Close()
 
-	// input timeout
-	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(inputTimeout)*time.Second)
-	defer cancel()
-
 	scanner := bufio.NewScanner(f)
-
 	if scanner.Scan() {
 		firstLine := scanner.Text()
 		if strings.HasPrefix(firstLine, "#sleep=") {
@@ -117,6 +112,10 @@ func processFileWithTimeout(relPath, fullPath string, inputTimeout int) Result {
 	if err := scanner.Err(); err != nil {
 		return Result{Path: relPath, Status: "timeout"}
 	}
+
+	// input timeout
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(inputTimeout)*time.Second)
+	defer cancel()
 
 	resCh := make(chan Result, 1)
 	go func() {
