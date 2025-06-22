@@ -1,6 +1,3 @@
-
-
-
 ## Solution notes
 
 ### Task 01 – Run‑Length Encoder
@@ -14,7 +11,7 @@ I first set the result as empty string, current character as runes[0] and count 
 
 ### Task 02 – Fix‑the‑Bug
 - Language: Go
-- Approach: Replaced the non-thread-safe increment (`counter++`) with `atomic.AddInt32(&counter, 1)` to make the ID generation safe under concurrency. I first noticed that the bug was due to multiple goroutines incrementing the same variable without synchronization, which can lead to race conditions and duplicate IDs. I considered using a `sync.Mutex` to lock the increment operation, but realized that for a simple counter, atomic operations are more efficient and idiomatic in Go.
+- Approach: Replaced the non-thread-safe increment (`counter++`) with `atomic.AddInt32(&counter, 1)` to make the ID generation safe under concurrency. I first noticed that the bug was due to multiple goroutines incrementing the same variable without synchronization, which can lead to race conditions and duplicate IDs. I considered using a `sync.Mutex` to lock the increment operation, but realized that for a simple counter, atomic operations are more efficient and idiomatic in Go. With atomic, we can make sure that one instruction will happen one at a time in sequence without any interferance even if we use concurrent goroutine.
 - Why: I considered both `sync.Mutex` and `sync/atomic`. Since we are only incrementing a single `int32` variable, `atomic` is the more efficient and minimal solution. It avoids locking overhead and keeps the fix small, fast, and idiomatic.
 - Time spent: ~15 min
 AI tools used: Consulted ChatGPT to research best practices for safe concurrent increments in Go, and to compare sync.Mutex vs sync/atomic.
